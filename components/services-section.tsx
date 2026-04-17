@@ -1,6 +1,6 @@
 "use client"
 
-import { Palette, Home, Droplets, Flame, SunMedium } from "lucide-react"
+import { Droplets, Flame, SunMedium } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 const scrollToForm = (e: React.MouseEvent) => {
@@ -9,16 +9,6 @@ const scrollToForm = (e: React.MouseEvent) => {
 }
 
 const services = [
-  {
-    icon: Palette,
-    title: "3D Landscape Design",
-    description: "Visualize your dream yard before we break ground with our custom 3D designs.",
-  },
-  {
-    icon: Home,
-    title: "Outdoor Kitchens & Pergolas",
-    description: "Create the perfect entertainment space with custom-built outdoor living areas.",
-  },
   {
     icon: Droplets,
     title: "Artificial Turf Installation",

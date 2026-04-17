@@ -6,21 +6,17 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { CheckCircle2, ChevronRight, ChevronLeft } from "lucide-react"
 
-const projectTypes = [
-  { id: "full-renovation", label: "Full Yard Renovation", description: "Complete backyard transformation" },
-  { id: "patio-pavers", label: "Patio & Pavers", description: "Travertine, concrete, or stone work" },
-  { id: "outdoor-kitchen", label: "Outdoor Kitchen", description: "BBQ, counters, and dining areas" },
-  { id: "artificial-turf", label: "Artificial Turf", description: "Low-maintenance green lawn" },
-  { id: "pergola-shade", label: "Pergola & Shade", description: "Covered outdoor living spaces" },
+const packageOptions = [
+  { id: "essential", label: "Essential Package - $10,000", description: "Perfect starter transformation" },
+  { id: "comfort", label: "Comfort - $21,000", description: "Enhanced outdoor living" },
+  { id: "signature", label: "Signature - $50,000", description: "Premium full renovation" },
 ]
-
-
 
 export function QuoteForm() {
   const [step, setStep] = useState(1)
   const [direction, setDirection] = useState<"forward" | "backward">("forward")
   const [formData, setFormData] = useState({
-    projectTypes: [] as string[],
+    selectedPackage: "",
     name: "",
     email: "",
     phone: "",
@@ -28,7 +24,7 @@ export function QuoteForm() {
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const totalSteps = 2
+  const totalSteps = 4
 
   const handleNext = () => {
     if (step < totalSteps) {
@@ -49,16 +45,13 @@ export function QuoteForm() {
     setIsSubmitting(true)
     
     try {
-      // Get readable labels for the selected options
-      const projectLabels = formData.projectTypes
-        .map(id => projectTypes.find(p => p.id === id)?.label || id)
-        .join(', ')
+      const packageLabel = packageOptions.find(p => p.id === formData.selectedPackage)?.label || formData.selectedPackage
 
       const webhookData = {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
-        project_type: projectLabels,
+        selected_package: packageLabel,
         source: 'Website Quote Form',
         submitted_at: new Date().toISOString(),
       }
@@ -79,7 +72,7 @@ export function QuoteForm() {
       // Fire Facebook Pixel Lead conversion event
       if (typeof window !== 'undefined' && typeof window.fbq === 'function') {
         window.fbq('track', 'Lead', {
-          content_name: projectLabels,
+          content_name: packageLabel,
           currency: 'USD',
         })
       }
@@ -97,9 +90,13 @@ export function QuoteForm() {
   const canProceed = () => {
     switch (step) {
       case 1:
-        return formData.projectTypes.length > 0
+        return formData.selectedPackage !== ""
       case 2:
-        return formData.name !== "" && formData.email !== "" && formData.phone !== ""
+        return formData.name !== ""
+      case 3:
+        return formData.email !== ""
+      case 4:
+        return formData.phone !== ""
       default:
         return false
     }
@@ -144,7 +141,7 @@ export function QuoteForm() {
         {/* Progress Bar */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
-            {[1, 2].map((s) => (
+            {[1, 2, 3, 4].map((s) => (
               <div
                 key={s}
                 className={`flex items-center justify-center w-10 h-10 rounded-full text-sm font-semibold transition-all duration-300 ${
@@ -171,8 +168,8 @@ export function QuoteForm() {
         <div className="bg-white rounded-2xl shadow-xl p-6 lg:p-10 border border-[#7cb82f]/10 overflow-hidden">
           <form onSubmit={handleSubmit}>
             {/* Step Content with Animation */}
-            <div className="relative min-h-[320px]">
-              {/* Step 1: Project Type (Multi-select) */}
+            <div className="relative min-h-[280px]">
+              {/* Step 1: Package Selection */}
               <div
                 className={`transition-all duration-500 ease-out ${
                   step === 1
@@ -182,45 +179,36 @@ export function QuoteForm() {
                     : "opacity-0 translate-x-full absolute inset-0 pointer-events-none"
                 }`}
               >
-                <h3 className="text-xl font-semibold text-[#4a4a4a] mb-2">
-                  What type of project are you planning?
+                <h3 className="text-xl font-semibold text-[#4a4a4a] mb-6">
+                  Which package interested you the most?
                 </h3>
-                <p className="text-sm text-[#6b6b6b] mb-6">Select all that apply</p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {projectTypes.map((type) => {
-                    const isSelected = formData.projectTypes.includes(type.id)
-                    return (
-                      <button
-                        key={type.id}
-                        type="button"
-                        onClick={() => {
-                          const newTypes = isSelected
-                            ? formData.projectTypes.filter(t => t !== type.id)
-                            : [...formData.projectTypes, type.id]
-                          setFormData({ ...formData, projectTypes: newTypes })
-                        }}
-                        className={`p-4 rounded-xl border-2 text-left transition-all duration-200 relative ${
-                          isSelected
-                            ? "border-[#7cb82f] bg-[#7cb82f]/5"
-                            : "border-[#e5e5e5] hover:border-[#7cb82f]/50 hover:bg-[#f8faf6]"
-                        }`}
-                      >
-                        {isSelected && (
-                          <div className="absolute top-2 right-2 w-5 h-5 bg-[#7cb82f] rounded-full flex items-center justify-center">
-                            <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                            </svg>
-                          </div>
-                        )}
-                        <div className="font-semibold text-[#4a4a4a]">{type.label}</div>
-                        <div className="text-sm text-[#6b6b6b]">{type.description}</div>
-                      </button>
-                    )
-                  })}
+                <div className="grid grid-cols-1 gap-3">
+                  {packageOptions.map((pkg) => (
+                    <button
+                      key={pkg.id}
+                      type="button"
+                      onClick={() => setFormData({ ...formData, selectedPackage: pkg.id })}
+                      className={`p-4 rounded-xl border-2 text-left transition-all duration-200 relative ${
+                        formData.selectedPackage === pkg.id
+                          ? "border-[#7cb82f] bg-[#7cb82f]/5"
+                          : "border-[#e5e5e5] hover:border-[#7cb82f]/50 hover:bg-[#f8faf6]"
+                      }`}
+                    >
+                      {formData.selectedPackage === pkg.id && (
+                        <div className="absolute top-4 right-4 w-5 h-5 bg-[#7cb82f] rounded-full flex items-center justify-center">
+                          <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
+                      )}
+                      <div className="font-semibold text-[#4a4a4a]">{pkg.label}</div>
+                      <div className="text-sm text-[#6b6b6b]">{pkg.description}</div>
+                    </button>
+                  ))}
                 </div>
               </div>
 
-              {/* Step 2: Contact Info */}
+              {/* Step 2: Name */}
               <div
                 className={`transition-all duration-500 ease-out ${
                   step === 2
@@ -231,48 +219,76 @@ export function QuoteForm() {
                 }`}
               >
                 <h3 className="text-xl font-semibold text-[#4a4a4a] mb-6">
-                  Great! How can we get in touch?
+                  What&apos;s your name?
                 </h3>
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="name" className="text-[#4a4a4a] font-medium">
-                      Full Name
-                    </Label>
-                    <Input
-                      id="name"
-                      type="text"
-                      placeholder="John Smith"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="mt-1.5 h-12 border-[#e5e5e5] focus:border-[#7cb82f] focus:ring-[#7cb82f]"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="email" className="text-[#4a4a4a] font-medium">
-                      Email Address
-                    </Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="john@example.com"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="mt-1.5 h-12 border-[#e5e5e5] focus:border-[#7cb82f] focus:ring-[#7cb82f]"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="phone" className="text-[#4a4a4a] font-medium">
-                      Phone Number
-                    </Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      placeholder="(623) 555-1234"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="mt-1.5 h-12 border-[#e5e5e5] focus:border-[#7cb82f] focus:ring-[#7cb82f]"
-                    />
-                  </div>
+                <div>
+                  <Label htmlFor="name" className="text-[#4a4a4a] font-medium">
+                    Full Name
+                  </Label>
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="John Smith"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="mt-1.5 h-12 border-[#e5e5e5] focus:border-[#7cb82f] focus:ring-[#7cb82f]"
+                  />
+                </div>
+              </div>
+
+              {/* Step 3: Email */}
+              <div
+                className={`transition-all duration-500 ease-out ${
+                  step === 3
+                    ? "opacity-100 translate-x-0"
+                    : step > 3
+                    ? "opacity-0 -translate-x-full absolute inset-0 pointer-events-none"
+                    : "opacity-0 translate-x-full absolute inset-0 pointer-events-none"
+                }`}
+              >
+                <h3 className="text-xl font-semibold text-[#4a4a4a] mb-6">
+                  What&apos;s your email address?
+                </h3>
+                <div>
+                  <Label htmlFor="email" className="text-[#4a4a4a] font-medium">
+                    Email Address
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="john@example.com"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="mt-1.5 h-12 border-[#e5e5e5] focus:border-[#7cb82f] focus:ring-[#7cb82f]"
+                  />
+                </div>
+              </div>
+
+              {/* Step 4: Phone */}
+              <div
+                className={`transition-all duration-500 ease-out ${
+                  step === 4
+                    ? "opacity-100 translate-x-0"
+                    : step > 4
+                    ? "opacity-0 -translate-x-full absolute inset-0 pointer-events-none"
+                    : "opacity-0 translate-x-full absolute inset-0 pointer-events-none"
+                }`}
+              >
+                <h3 className="text-xl font-semibold text-[#4a4a4a] mb-6">
+                  What&apos;s your phone number?
+                </h3>
+                <div>
+                  <Label htmlFor="phone" className="text-[#4a4a4a] font-medium">
+                    Phone Number
+                  </Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="(623) 555-1234"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    className="mt-1.5 h-12 border-[#e5e5e5] focus:border-[#7cb82f] focus:ring-[#7cb82f]"
+                  />
                 </div>
               </div>
             </div>
