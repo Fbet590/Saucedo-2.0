@@ -9,7 +9,7 @@ export function Footer() {
           {/* Brand */}
           <div className="lg:col-span-1">
             <Image
-              src="/logo.png"
+              src="/images/logo.png"
               alt="Saucedo's Landscape LLC"
               width={150}
               height={60}
