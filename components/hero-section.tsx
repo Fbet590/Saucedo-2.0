@@ -35,9 +35,12 @@ export function HeroSection() {
           </div>
 
           {/* Heading */}
-          <h1 className="font-[family-name:var(--font-heading)] text-4xl sm:text-5xl lg:text-7xl font-extrabold text-background leading-tight mb-10 text-balance">
-            Transform Your Yard Into Your Luxury Stay-cation Space
+          <h1 className="font-[family-name:var(--font-heading)] text-4xl sm:text-5xl lg:text-7xl font-extrabold text-background leading-tight mb-4 text-balance">
+            3 Packages. One Stunning Backyard.
           </h1>
+          <p className="text-xl sm:text-2xl lg:text-3xl text-background/90 font-medium mb-10">
+            $10K · $21K · $50K — pick what fits and we&apos;ll handle the rest
+          </p>
 
           {/* CTA Button */}
           <div className="flex justify-center">
