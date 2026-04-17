@@ -5,7 +5,7 @@ export async function POST(request: Request) {
     const data = await request.json()
 
     const response = await fetch(
-      'https://services.leadconnectorhq.com/hooks/NnkTF5Tofs6PsscmI4EX/webhook-trigger/d9829cd2-ea23-4f4c-8438-06d7e15ebb2e',
+      'https://services.leadconnectorhq.com/hooks/NnkTF5Tofs6PsscmI4EX/webhook-trigger/7Vlp4TuiHZ2eDAWkY2m5',
       {
         method: 'POST',
         headers: {

@@ -24,7 +24,7 @@ export function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center">
             <Image
-              src="/logo.png"
+              src="/images/logo.png"
               alt="Saucedo's Landscape LLC"
               width={150}
               height={60}
