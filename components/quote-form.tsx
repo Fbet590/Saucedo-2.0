@@ -14,25 +14,13 @@ const projectTypes = [
   { id: "pergola-shade", label: "Pergola & Shade", description: "Covered outdoor living spaces" },
 ]
 
-const budgetRanges = [
-  { id: "10k-25k", label: "$10,000 - $25,000", description: "Mid-size renovations" },
-  { id: "25k-50k", label: "$25,000 - $50,000", description: "Large transformations" },
-  { id: "50k-plus", label: "$50,000+", description: "Premium full renovations" },
-]
 
-const flexibilityOptions = [
-  { id: "fixed", label: "Fixed Budget", description: "I need to stay within this range" },
-  { id: "somewhat", label: "Somewhat Flexible", description: "I can adjust for the right features" },
-  { id: "flexible", label: "Very Flexible", description: "Quality matters more than budget" },
-]
 
 export function QuoteForm() {
   const [step, setStep] = useState(1)
   const [direction, setDirection] = useState<"forward" | "backward">("forward")
   const [formData, setFormData] = useState({
     projectTypes: [] as string[],
-    budget: "",
-    flexibility: "",
     name: "",
     email: "",
     phone: "",
@@ -40,7 +28,7 @@ export function QuoteForm() {
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const totalSteps = 4
+  const totalSteps = 2
 
   const handleNext = () => {
     if (step < totalSteps) {
@@ -65,16 +53,12 @@ export function QuoteForm() {
       const projectLabels = formData.projectTypes
         .map(id => projectTypes.find(p => p.id === id)?.label || id)
         .join(', ')
-      const budgetLabel = budgetRanges.find(b => b.id === formData.budget)?.label || formData.budget
-      const flexibilityLabel = flexibilityOptions.find(f => f.id === formData.flexibility)?.label || formData.flexibility
 
       const webhookData = {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
         project_type: projectLabels,
-        budget: budgetLabel,
-        budget_flexibility: flexibilityLabel,
         source: 'Website Quote Form',
         submitted_at: new Date().toISOString(),
       }
@@ -96,8 +80,6 @@ export function QuoteForm() {
       if (typeof window !== 'undefined' && typeof window.fbq === 'function') {
         window.fbq('track', 'Lead', {
           content_name: projectLabels,
-          content_category: formData.budget,
-          value: formData.budget === '50k-plus' ? 50000 : formData.budget === '25k-50k' ? 37500 : 17500,
           currency: 'USD',
         })
       }
@@ -117,10 +99,6 @@ export function QuoteForm() {
       case 1:
         return formData.projectTypes.length > 0
       case 2:
-        return formData.budget !== ""
-      case 3:
-        return formData.flexibility !== ""
-      case 4:
         return formData.name !== "" && formData.email !== "" && formData.phone !== ""
       default:
         return false
@@ -166,7 +144,7 @@ export function QuoteForm() {
         {/* Progress Bar */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
-            {[1, 2, 3, 4].map((s) => (
+            {[1, 2].map((s) => (
               <div
                 key={s}
                 className={`flex items-center justify-center w-10 h-10 rounded-full text-sm font-semibold transition-all duration-300 ${
@@ -242,76 +220,12 @@ export function QuoteForm() {
                 </div>
               </div>
 
-              {/* Step 2: Budget */}
+              {/* Step 2: Contact Info */}
               <div
                 className={`transition-all duration-500 ease-out ${
                   step === 2
                     ? "opacity-100 translate-x-0"
                     : step > 2
-                    ? "opacity-0 -translate-x-full absolute inset-0 pointer-events-none"
-                    : "opacity-0 translate-x-full absolute inset-0 pointer-events-none"
-                }`}
-              >
-                <h3 className="text-xl font-semibold text-[#4a4a4a] mb-6">
-                  What&apos;s your approximate budget for this project?
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {budgetRanges.map((range) => (
-                    <button
-                      key={range.id}
-                      type="button"
-                      onClick={() => setFormData({ ...formData, budget: range.id })}
-                      className={`p-4 rounded-xl border-2 text-left transition-all duration-200 ${
-                        formData.budget === range.id
-                          ? "border-[#7cb82f] bg-[#7cb82f]/5"
-                          : "border-[#e5e5e5] hover:border-[#7cb82f]/50 hover:bg-[#f8faf6]"
-                      }`}
-                    >
-                      <div className="font-semibold text-[#4a4a4a]">{range.label}</div>
-                      <div className="text-sm text-[#6b6b6b]">{range.description}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Step 3: Budget Flexibility */}
-              <div
-                className={`transition-all duration-500 ease-out ${
-                  step === 3
-                    ? "opacity-100 translate-x-0"
-                    : step > 3
-                    ? "opacity-0 -translate-x-full absolute inset-0 pointer-events-none"
-                    : "opacity-0 translate-x-full absolute inset-0 pointer-events-none"
-                }`}
-              >
-                <h3 className="text-xl font-semibold text-[#4a4a4a] mb-6">
-                  Do you have a flexible budget?
-                </h3>
-                <div className="grid grid-cols-1 gap-3">
-                  {flexibilityOptions.map((option) => (
-                    <button
-                      key={option.id}
-                      type="button"
-                      onClick={() => setFormData({ ...formData, flexibility: option.id })}
-                      className={`p-4 rounded-xl border-2 text-left transition-all duration-200 ${
-                        formData.flexibility === option.id
-                          ? "border-[#7cb82f] bg-[#7cb82f]/5"
-                          : "border-[#e5e5e5] hover:border-[#7cb82f]/50 hover:bg-[#f8faf6]"
-                      }`}
-                    >
-                      <div className="font-semibold text-[#4a4a4a]">{option.label}</div>
-                      <div className="text-sm text-[#6b6b6b]">{option.description}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Step 4: Contact Info */}
-              <div
-                className={`transition-all duration-500 ease-out ${
-                  step === 4
-                    ? "opacity-100 translate-x-0"
-                    : step > 4
                     ? "opacity-0 -translate-x-full absolute inset-0 pointer-events-none"
                     : "opacity-0 translate-x-full absolute inset-0 pointer-events-none"
                 }`}
