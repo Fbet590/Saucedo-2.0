@@ -23,8 +23,103 @@ export function QuoteForm() {
   })
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [errors, setErrors] = useState<{ email?: string; phone?: string }>({})
 
   const totalSteps = 4
+
+  // Email validation - checks format and common fake patterns
+  const validateEmail = (email: string): { valid: boolean; message?: string } => {
+    const trimmed = email.trim().toLowerCase()
+    
+    // Basic format check
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(trimmed)) {
+      return { valid: false, message: "Please enter a valid email address" }
+    }
+    
+    // Check for common fake/test email patterns
+    const fakePatterns = [
+      /^test@/,
+      /^fake@/,
+      /^asdf@/,
+      /^aaa@/,
+      /^123@/,
+      /@test\./,
+      /@fake\./,
+      /@example\./,
+      /@mailinator\./,
+      /@tempmail\./,
+      /@throwaway\./,
+      /@guerrillamail\./,
+      /@sharklasers\./,
+      /@10minutemail\./,
+    ]
+    
+    if (fakePatterns.some(pattern => pattern.test(trimmed))) {
+      return { valid: false, message: "Please enter a real email address" }
+    }
+    
+    // Check minimum length for local part and domain
+    const [localPart, domain] = trimmed.split('@')
+    if (localPart.length < 2 || domain.length < 4) {
+      return { valid: false, message: "Please enter a valid email address" }
+    }
+    
+    return { valid: true }
+  }
+
+  // Phone validation - US phone numbers
+  const validatePhone = (phone: string): { valid: boolean; message?: string } => {
+    // Remove all non-digit characters
+    const digits = phone.replace(/\D/g, '')
+    
+    // US phone should have 10 digits (or 11 if starting with 1)
+    if (digits.length === 11 && digits.startsWith('1')) {
+      // Valid with country code
+    } else if (digits.length !== 10) {
+      return { valid: false, message: "Please enter a valid 10-digit phone number" }
+    }
+    
+    // Get the 10-digit number
+    const tenDigits = digits.length === 11 ? digits.slice(1) : digits
+    
+    // Check for obviously fake patterns
+    const fakePatterns = [
+      /^0{10}$/,
+      /^1{10}$/,
+      /^2{10}$/,
+      /^(.)\1{9}$/,  // All same digit
+      /^1234567890$/,
+      /^0987654321$/,
+      /^5555555555$/,
+      /^123456/,
+    ]
+    
+    if (fakePatterns.some(pattern => pattern.test(tenDigits))) {
+      return { valid: false, message: "Please enter a real phone number" }
+    }
+    
+    // Area code cannot start with 0 or 1
+    if (tenDigits[0] === '0' || tenDigits[0] === '1') {
+      return { valid: false, message: "Please enter a valid US phone number" }
+    }
+    
+    // Exchange code (middle 3 digits) cannot start with 0 or 1
+    if (tenDigits[3] === '0' || tenDigits[3] === '1') {
+      return { valid: false, message: "Please enter a valid US phone number" }
+    }
+    
+    return { valid: true }
+  }
+
+  // Format phone number as user types
+  const formatPhoneNumber = (value: string): string => {
+    const digits = value.replace(/\D/g, '')
+    if (digits.length === 0) return ''
+    if (digits.length <= 3) return `(${digits}`
+    if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`
+    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`
+  }
 
   const handleNext = () => {
     if (step < totalSteps) {
@@ -92,13 +187,36 @@ export function QuoteForm() {
       case 1:
         return formData.selectedPackage !== ""
       case 2:
-        return formData.name !== ""
+        return formData.name.trim().length >= 2
       case 3:
-        return formData.email !== ""
+        return formData.email !== "" && validateEmail(formData.email).valid
       case 4:
-        return formData.phone !== ""
+        return formData.phone !== "" && validatePhone(formData.phone).valid
       default:
         return false
+    }
+  }
+
+  // Validate on blur for better UX
+  const handleEmailBlur = () => {
+    if (formData.email) {
+      const result = validateEmail(formData.email)
+      if (!result.valid) {
+        setErrors(prev => ({ ...prev, email: result.message }))
+      } else {
+        setErrors(prev => ({ ...prev, email: undefined }))
+      }
+    }
+  }
+
+  const handlePhoneBlur = () => {
+    if (formData.phone) {
+      const result = validatePhone(formData.phone)
+      if (!result.valid) {
+        setErrors(prev => ({ ...prev, phone: result.message }))
+      } else {
+        setErrors(prev => ({ ...prev, phone: undefined }))
+      }
     }
   }
 
@@ -256,11 +374,20 @@ export function QuoteForm() {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="john@example.com"
+                    placeholder="john@gmail.com"
                     value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="mt-1.5 h-12 border-[#e5e5e5] focus:border-[#7cb82f] focus:ring-[#7cb82f]"
+                    onChange={(e) => {
+                      setFormData({ ...formData, email: e.target.value })
+                      if (errors.email) setErrors(prev => ({ ...prev, email: undefined }))
+                    }}
+                    onBlur={handleEmailBlur}
+                    className={`mt-1.5 h-12 border-[#e5e5e5] focus:border-[#7cb82f] focus:ring-[#7cb82f] ${
+                      errors.email ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''
+                    }`}
                   />
+                  {errors.email && (
+                    <p className="mt-2 text-sm text-red-600">{errors.email}</p>
+                  )}
                 </div>
               </div>
 
@@ -286,9 +413,20 @@ export function QuoteForm() {
                     type="tel"
                     placeholder="(623) 555-1234"
                     value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="mt-1.5 h-12 border-[#e5e5e5] focus:border-[#7cb82f] focus:ring-[#7cb82f]"
+                    onChange={(e) => {
+                      const formatted = formatPhoneNumber(e.target.value)
+                      setFormData({ ...formData, phone: formatted })
+                      if (errors.phone) setErrors(prev => ({ ...prev, phone: undefined }))
+                    }}
+                    onBlur={handlePhoneBlur}
+                    className={`mt-1.5 h-12 border-[#e5e5e5] focus:border-[#7cb82f] focus:ring-[#7cb82f] ${
+                      errors.phone ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''
+                    }`}
+                    maxLength={14}
                   />
+                  {errors.phone && (
+                    <p className="mt-2 text-sm text-red-600">{errors.phone}</p>
+                  )}
                 </div>
               </div>
             </div>
