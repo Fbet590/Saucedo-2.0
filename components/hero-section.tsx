@@ -22,7 +22,7 @@ export function HeroSection() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32 text-center">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20 text-center">
         <div className="max-w-4xl mx-auto">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 bg-background/90 backdrop-blur-sm rounded-full px-4 py-2 mb-8">
@@ -35,7 +35,7 @@ export function HeroSection() {
           </div>
 
           {/* Heading */}
-          <h1 className="font-[family-name:var(--font-heading)] text-4xl sm:text-5xl lg:text-7xl font-extrabold text-background leading-tight mb-4 text-balance">
+          <h1 className="font-[family-name:var(--font-heading)] text-[2.5rem] sm:text-[3.25rem] lg:text-[5rem] font-extrabold text-background leading-tight mb-4 text-balance">
             3 Packages. One Stunning Backyard.
           </h1>
           <p className="text-xl sm:text-2xl lg:text-3xl text-background/90 font-medium mb-10">
