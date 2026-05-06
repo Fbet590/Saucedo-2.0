@@ -16,17 +16,17 @@ export async function POST(request: Request) {
       }
     )
 
-    // Send to Zapier webhook (if configured)
-    const zapierWebhookUrl = process.env.ZAPIER_WEBHOOK_URL
-    const zapierPromise = zapierWebhookUrl
-      ? fetch(zapierWebhookUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
-        })
-      : Promise.resolve(null)
+    // Send to Zapier webhook
+    const zapierPromise = fetch(
+      'https://hooks.zapier.com/hooks/catch/24750736/4y2in8a/',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      }
+    )
 
     // Wait for both webhooks to complete
     const [leadConnectorResponse, zapierResponse] = await Promise.all([
@@ -39,8 +39,8 @@ export async function POST(request: Request) {
       console.error('LeadConnector webhook error:', leadConnectorResponse.status, await leadConnectorResponse.text())
     }
 
-    // Check Zapier response (if it was sent)
-    if (zapierResponse && !zapierResponse.ok) {
+    // Check Zapier response
+    if (!zapierResponse.ok) {
       console.error('Zapier webhook error:', zapierResponse.status, await zapierResponse.text())
     }
 
