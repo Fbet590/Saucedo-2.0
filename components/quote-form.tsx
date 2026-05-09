@@ -249,7 +249,7 @@ export function QuoteForm() {
         {/* Header */}
         <div className="text-center mb-10">
           <h2 className="font-[family-name:var(--font-heading)] text-3xl lg:text-4xl font-extrabold text-[#4a4a4a] mb-4">
-            Get Your Free Quote
+            <span className="text-[#7cb82f]">Not All Homes Qualify.</span> But Yours Just Might — <span className="text-[#7cb82f] underline decoration-2 underline-offset-4">Let&apos;s Find Out.</span>
           </h2>
           <p className="text-lg text-[#6b6b6b]">
             Choose the options you&apos;re looking for below and we&apos;ll do the rest!
