@@ -39,7 +39,7 @@ export function HeroSection() {
             3 Packages. One Stunning Backyard.
           </h1>
           <p className="text-xl sm:text-2xl lg:text-3xl text-background/90 font-medium mb-10">
-            $21K · $40K · $50K — pick what fits and we&apos;ll handle the rest
+            $20K · $50K — pick what fits and we&apos;ll handle the rest
           </p>
 
           {/* CTA Button */}
