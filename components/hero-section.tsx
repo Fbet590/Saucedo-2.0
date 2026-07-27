@@ -3,6 +3,8 @@
 import { Button } from "@/components/ui/button"
 import { Star, ChevronDown } from "lucide-react"
 
+const SUBHEADLINE = "$20K · $50K — pick what fits and we'll handle the rest"
+
 const scrollToForm = (e: React.MouseEvent) => {
   e.preventDefault()
   document.getElementById('quote-form')?.scrollIntoView({ behavior: 'smooth' })
@@ -39,7 +41,7 @@ export function HeroSection() {
             Choose Your Package. One Stunning Backyard.
           </h1>
           <p className="text-xl sm:text-2xl lg:text-3xl text-background/90 font-medium mb-10">
-            {"$20K · $50K — pick what fits and we'll handle the rest"}
+            {SUBHEADLINE}
           </p>
 
           {/* CTA Button */}
