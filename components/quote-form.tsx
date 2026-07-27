@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label"
 import { CheckCircle2, ChevronRight, ChevronLeft } from "lucide-react"
 
 const packageOptions = [
-  { id: "essential", label: "Essential Package - $20,000", description: "Perfect starter transformation" },
+  { id: "essential", label: "Essential Package - $21,000", description: "Perfect starter transformation" },
   { id: "comfort", label: "Comfort - $40,000", description: "Enhanced outdoor living" },
   { id: "signature", label: "Signature - $50,000", description: "Premium full renovation" },
 ]
