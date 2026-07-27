@@ -36,7 +36,7 @@ export function HeroSection() {
 
           {/* Heading */}
           <h1 className="font-[family-name:var(--font-heading)] text-[2.5rem] sm:text-[3.25rem] lg:text-[5rem] font-extrabold text-background leading-tight mb-4 text-balance">
-            3 Packages. One Stunning Backyard.
+            Choose Your Package. One Stunning Backyard.
           </h1>
           <p className="text-xl sm:text-2xl lg:text-3xl text-background/90 font-medium mb-10">
             {"$20K · $50K — pick what fits and we'll handle the rest"}
