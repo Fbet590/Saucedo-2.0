@@ -7,8 +7,8 @@ import { Label } from "@/components/ui/label"
 import { CheckCircle2, ChevronRight, ChevronLeft } from "lucide-react"
 
 const packageOptions = [
-  { id: "essential", label: "Essential Package - $10,000", description: "Perfect starter transformation" },
-  { id: "comfort", label: "Comfort - $21,000", description: "Enhanced outdoor living" },
+  { id: "essential", label: "Essential Package - $20,000", description: "Perfect starter transformation" },
+  { id: "comfort", label: "Comfort - $40,000", description: "Enhanced outdoor living" },
   { id: "signature", label: "Signature - $50,000", description: "Premium full renovation" },
 ]
 
@@ -469,10 +469,7 @@ export function QuoteForm() {
           </form>
         </div>
 
-        {/* Trust Badge */}
-        <p className="text-center text-sm text-[#6b6b6b] mt-6">
-          No spam, ever. We&apos;ll only contact you about your project.
-        </p>
+
       </div>
     </section>
   )
